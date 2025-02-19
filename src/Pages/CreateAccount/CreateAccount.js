@@ -1,5 +1,5 @@
 import { Button, Checkbox, Flex, Form, Input, Layout } from "antd";
-import {  auth  } from '../../ firebase';
+import {  auth  } from '../../firebase';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
