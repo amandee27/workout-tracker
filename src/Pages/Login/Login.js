@@ -5,16 +5,19 @@ import { Link, useNavigate } from "react-router-dom";
 import LoginImg from "../../Logo/LoginCover.jpg";
 import { Content } from "antd/es/layout/layout";
 import { useState } from "react";
+import authErrors from "../../firebase-auth.js";
 
 const imgStyle = {
   display: "block",
   width: "100%",
   opacity: 0.3,
+  minHeight: 800,
 };
 
 const Login = () => {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const onFinish = (values) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
@@ -24,6 +27,9 @@ const Login = () => {
         navigate("/home");
       })
       .catch((error) => {
+        let errorCode = error.code;
+        let result = /.+\/(.+)/g.exec(errorCode);
+        setErrorMessage(authErrors[result[1]]);
         setLoginError(true);
       });
   };
@@ -62,8 +68,7 @@ const Login = () => {
                   <Row justify="center">
                     <Alert
                       type="error"
-                      message="The email and password you entered did not match our
-                      records.Please check and try again."
+                      message={errorMessage}
                       style={{
                         justify: "center",
                         marginBottom: 10,
