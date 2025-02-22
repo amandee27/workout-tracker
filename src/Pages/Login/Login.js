@@ -1,70 +1,162 @@
-import { Button, Checkbox, Flex, Form, Input } from "antd";
-import {  signInWithEmailAndPassword   } from 'firebase/auth';
-import {  auth  } from '../../firebase';
-import { useNavigate } from "react-router-dom";
+import { Button, Col, Form, Input, Layout, Row, Typography } from "antd";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import LoginImg from "../../Logo/LoginCover.jpg";
+import { Content } from "antd/es/layout/layout";
+import { useState } from "react";
+
+const imgStyle = {
+  display: "block",
+  width: "100%",
+  opacity: 0.3,
+};
 
 const Login = () => {
-    const navigate = useNavigate();
-    const onFinish = (values) => {
-        signInWithEmailAndPassword(auth, values.username, values.password)
-        .then((userCredential)=>{
-            const user = userCredential.user;
-            console.log(user);
-            navigate("/home");
-        }).catch((error)=>{
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode,errorMessage);
-        })
-        console.log('Success:', values);
-    };
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(false);
+  const onFinish = (values) => {
+    signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        setLoginError(false);
+        const user = userCredential.user;
+        localStorage.setItem("token-info", JSON.stringify(user));
+        navigate("/home");
+      })
+      .catch((error) => {
+        setLoginError(true);
+      });
+  };
 
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
-
-    return ( 
-        <div id="container">
-        <Flex justify='center'>
-            <h1>Login</h1>
-        </Flex>
-        <Flex justify='center'>
-            <Form name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 1000 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                autoComplete="off"
-
+  return (
+    <Layout>
+      <Content>
+        <Row>
+          <Col span={12} style={{ minHeight: 800 }}>
+            <Row
+              align="middle"
+              justify="center"
+              style={{ minHeight: 800 }}
+              //span={12}
             >
-                <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+              <Col style={{ width: "100%" }}>
+                <Row justify="center">
+                  <Typography.Title
+                    level={1}
+                    style={{ justifyContent: "center" }}
+                  >
+                    Login
+                  </Typography.Title>
+                </Row>
+                <Row
+                  justify="center"
+                  style={{
+                    marginTop: -20,
+                    marginBottom: 20,
+                  }}
                 >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password />
-                </Form.Item>
-                <Form.Item name="remember" valuePropName="checked" label={null}>
-                    <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-                <Form.Item label={null}>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Flex>
-    </div>
-     );
-}
- 
+                  <Typography.Paragraph>
+                    It's time to regain your fitness!
+                  </Typography.Paragraph>
+                </Row>
+                {loginError && (
+                  <Row justify="center">
+                    <Typography.Paragraph
+                      style={{
+                        whiteSpace: "break-spaces",
+                        width: "350px",
+                        marginTop: -20,
+                      }}
+                      type="danger"
+                    >
+                      The email and password you entered did not match our
+                      records.Please check and try again.
+                    </Typography.Paragraph>
+                  </Row>
+                )}
+
+                <Row justify="center">
+                  <Col style={{ width: "90%", marginLeft: -80 }}>
+                    <Form
+                      name="basic"
+                      labelCol={{ span: 8 }}
+                      wrapperCol={{ span: 16 }}
+                      initialValues={{ remember: true }}
+                      onFinish={onFinish}
+                      autoComplete="off"
+                    >
+                      <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your email!",
+                          },
+                          { type: "email", message: "Email is invalid" },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your password!",
+                          },
+                        ]}
+                      >
+                        <Input.Password />
+                      </Form.Item>
+                      <Row
+                        justify="center"
+                        style={{
+                          paddingBottom: 10,
+                          marginLeft: 55,
+                          position: "relative",
+                        }}
+                      >
+                        <Link to="/create-account">Forgot your password?</Link>
+                      </Row>
+                      <Form.Item
+                        style={{ justifyItems: "center" }}
+                        label={null}
+                      >
+                        <Button type="primary" htmlType="submit">
+                          Submit
+                        </Button>
+                      </Form.Item>
+                      <Row
+                        justify="center"
+                        style={{
+                          paddingBottom: 10,
+                          marginTop: -15,
+                          marginLeft: 55,
+                          position: "relative",
+                        }}
+                      >
+                        <Typography.Paragraph>
+                          Don't have an account ?{" "}
+                          <Link to="/create-account">
+                            <u>Sign up!</u>
+                          </Link>
+                        </Typography.Paragraph>
+                      </Row>
+                    </Form>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={12}>
+            <img alt="avatar" src={LoginImg} style={imgStyle} />
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
+  );
+};
+
 export default Login;
