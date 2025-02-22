@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Layout, Row, Typography } from "antd";
+import { Alert, Button, Col, Form, Input, Layout, Row, Typography } from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { Link, useNavigate } from "react-router-dom";
@@ -51,8 +51,7 @@ const Login = () => {
                 <Row
                   justify="center"
                   style={{
-                    marginTop: -20,
-                    marginBottom: 20,
+                    marginTop: -15,
                   }}
                 >
                   <Typography.Paragraph>
@@ -61,17 +60,17 @@ const Login = () => {
                 </Row>
                 {loginError && (
                   <Row justify="center">
-                    <Typography.Paragraph
+                    <Alert
+                      type="error"
+                      message="The email and password you entered did not match our
+                      records.Please check and try again."
                       style={{
-                        whiteSpace: "break-spaces",
-                        width: "350px",
-                        marginTop: -20,
+                        justify: "center",
+                        marginBottom: 10,
+                        width: "500px",
                       }}
-                      type="danger"
-                    >
-                      The email and password you entered did not match our
-                      records.Please check and try again.
-                    </Typography.Paragraph>
+                      banner
+                    />
                   </Row>
                 )}
 
