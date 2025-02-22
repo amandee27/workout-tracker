@@ -88,6 +88,7 @@ const Login = () => {
                       <Form.Item
                         label="Email"
                         name="email"
+                        validateTrigger={["onBlur"]}
                         rules={[
                           {
                             required: true,
@@ -118,7 +119,7 @@ const Login = () => {
                           position: "relative",
                         }}
                       >
-                        <Link to="/create-account">Forgot your password?</Link>
+                        <Link to="/forgot-password">Forgot your password?</Link>
                       </Row>
                       <Form.Item
                         style={{ justifyItems: "center" }}
