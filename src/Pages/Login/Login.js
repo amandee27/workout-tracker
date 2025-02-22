@@ -84,6 +84,7 @@ const Login = () => {
                       initialValues={{ remember: true }}
                       onFinish={onFinish}
                       autoComplete="off"
+                      requiredMark={false}
                     >
                       <Form.Item
                         label="Email"
