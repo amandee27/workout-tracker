@@ -39,12 +39,7 @@ const Login = () => {
       <Content>
         <Row>
           <Col span={12} style={{ minHeight: 800 }}>
-            <Row
-              align="middle"
-              justify="center"
-              style={{ minHeight: 800 }}
-              //span={12}
-            >
+            <Row align="middle" justify="center" style={{ minHeight: 800 }}>
               <Col style={{ width: "100%" }}>
                 <Row justify="center">
                   <Typography.Title
@@ -146,7 +141,7 @@ const Login = () => {
                         <Typography.Paragraph>
                           Don't have an account ?{" "}
                           <Link to="/create-account">
-                            <u>Sign up!</u>
+                            <u>Create Account!</u>
                           </Link>
                         </Typography.Paragraph>
                       </Row>
