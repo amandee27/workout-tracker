@@ -30,12 +30,10 @@ const formHalf = {
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loginError, setLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const onFinish = (values) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
-        setLoginError(false);
         const user = userCredential.user;
         localStorage.setItem("token-info", JSON.stringify(user));
         navigate("/home");
@@ -44,7 +42,6 @@ const Login = () => {
         let errorCode = error.code;
         let result = /.+\/(.+)/g.exec(errorCode);
         setErrorMessage(authErrors[result[1]]);
-        setLoginError(true);
       });
   };
 
@@ -70,7 +67,7 @@ const Login = () => {
               your goals, and access personalized workout plans.
             </Text>
             <Divider />
-            {loginError && (
+            {errorMessage && (
               <Row justify="center">
                 <Alert
                   type="error"

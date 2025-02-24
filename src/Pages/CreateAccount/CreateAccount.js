@@ -30,14 +30,12 @@ const formHalf = {
 
 const CreateAccount = () => {
   const navigate = useNavigate();
-  const [loginError, setLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const onFinish = async (values) => {
     await createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        setLoginError(false);
         updateProfile(user, {
           displayName: values.name,
         }).then(() => {
@@ -49,7 +47,6 @@ const CreateAccount = () => {
         let errorCode = error.code;
         let result = /.+\/(.+)/g.exec(errorCode);
         setErrorMessage(authErrors[result[1]]);
-        setLoginError(true);
       });
   };
 
@@ -75,7 +72,7 @@ const CreateAccount = () => {
               workouts, and track progress—all in one place.
             </Text>
             <Divider />
-            {loginError && (
+            {errorMessage && (
               <Row justify="center">
                 <Alert
                   type="error"
