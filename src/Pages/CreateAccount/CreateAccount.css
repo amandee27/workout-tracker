@@ -1,0 +1,6 @@
+@media (min-width: 767.98px) {
+  /* sm */
+  .container {
+    flex-direction: row-reverse;
+  }
+}

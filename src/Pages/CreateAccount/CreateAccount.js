@@ -1,76 +1,145 @@
-import { Button, Checkbox, Flex, Form, Input, Layout } from "antd";
+import {
+  Alert,
+  Button,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Typography,
+} from "antd";
 import { auth } from "../../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import CreateAccountImg from "../../Logo/CreateAccount.jpg";
+import "./CreateAccount.css";
+import { useState } from "react";
+import authErrors from "../../firebase-error-meassages.js";
+
+const { Title, Text } = Typography;
+const imageHalf = {
+  backgroundImage: `url(${CreateAccountImg})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  height: "100vh",
+};
+
+const formHalf = {
+  height: "100vh",
+};
 
 const CreateAccount = () => {
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onFinish = async (values) => {
     await createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
+        setLoginError(false);
         updateProfile(user, {
-          displayName: values.username,
+          displayName: values.name,
+        }).then(() => {
+          localStorage.setItem("token-info", JSON.stringify(user));
+          navigate("/home");
         });
-        navigate("/login");
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        let errorCode = error.code;
+        let result = /.+\/(.+)/g.exec(errorCode);
+        setErrorMessage(authErrors[result[1]]);
+        setLoginError(true);
       });
   };
 
   return (
-    <div id="container">
-      <Flex justify="center">
-        <h1>Create Account</h1>
-      </Flex>
-      <Flex justify="center">
-        <Form
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          style={{ maxWidth: 1000 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Username"
-            name="username"
-            rules={[
-              { required: true, message: "Please input your username!" },
-              { type: "texr" },
-            ]}
+    <Row className="container">
+      <Col span={24} md={12} style={imageHalf}></Col>
+      <Col span={24} md={12}>
+        <Row justify="space-around" align="middle" style={formHalf}>
+          <Form
+            name="basic"
+            layout="vertical"
+            style={{
+              maxWidth: 400,
+            }}
+            onFinish={onFinish}
+            autoComplete="off"
+            requiredMark={false}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please input your email!" },
-              { type: "email", message: "Email is invalid" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Flex>
-    </div>
+            <Title>Sign In</Title>
+            <Title level={5}>Welcome to Fitness Tracker!</Title>
+            <Text>
+              Join us to kickstart your fitness journey! Set goals, customize
+              workouts, and track progress—all in one place.
+            </Text>
+            <Divider />
+            {loginError && (
+              <Row justify="center">
+                <Alert
+                  type="error"
+                  message={errorMessage}
+                  style={{
+                    marginBottom: 10,
+                    width: 400,
+                  }}
+                  banner
+                />
+              </Row>
+            )}
+            <Form.Item
+              label="Name"
+              name="name"
+              validateTrigger={["onBlur"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your name!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              validateTrigger={["onBlur"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your email!",
+                },
+                { type: "email", message: "Email is invalid" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              validateTrigger={["onBlur"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item label={null}>
+              <Button type="primary" htmlType="submit" block>
+                Submit
+              </Button>
+            </Form.Item>
+            <Text>
+              Already have an account? <Link to={"/login"}>Login!</Link>
+            </Text>
+          </Form>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 
