@@ -1,17 +1,31 @@
-import { Alert, Button, Col, Form, Input, Layout, Row, Typography } from "antd";
+import {
+  Alert,
+  Button,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Layout,
+  Row,
+  Typography,
+} from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import LoginImg from "../../Logo/LoginCover.jpg";
+import LoginImg from "../../Logo/LoginPage.jpg";
 import { Content } from "antd/es/layout/layout";
 import { useState } from "react";
-import authErrors from "../../firebase-auth.js";
+import authErrors from "../../firebase-error-meassages.js";
+const { Title, Text } = Typography;
 
-const imgStyle = {
-  display: "block",
-  width: "100%",
-  opacity: 0.3,
-  minHeight: 800,
+const imageHalf = {
+  backgroundImage: `url(${LoginImg})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  height: "100vh",
+};
+const formHalf = {
+  height: "100vh",
 };
 
 const Login = () => {
@@ -35,128 +49,85 @@ const Login = () => {
   };
 
   return (
-    <Layout>
-      <Content>
-        <Row>
-          <Col span={12} style={{ minHeight: 800 }}>
-            <Row align="middle" justify="center" style={{ minHeight: 800 }}>
-              <Col style={{ width: "100%" }}>
-                <Row justify="center">
-                  <Typography.Title
-                    level={1}
-                    style={{ justifyContent: "center" }}
-                  >
-                    Login
-                  </Typography.Title>
-                </Row>
-                <Row
-                  justify="center"
+    <Row className="container">
+      <Col span={24} md={12} style={imageHalf}></Col>
+      <Col span={24} md={12}>
+        <Row justify="space-around" align="middle" style={formHalf}>
+          <Form
+            name="basic"
+            layout="vertical"
+            style={{
+              maxWidth: 400,
+            }}
+            onFinish={onFinish}
+            autoComplete="off"
+            requiredMark={false}
+          >
+            <Title>Login</Title>
+            <Title level={5}>Hello, Welcome Back!</Title>
+            <Text>
+              It's time to regain your fitness! Log in to track progress, reach
+              your goals, and access personalized workout plans.
+            </Text>
+            <Divider />
+            {loginError && (
+              <Row justify="center">
+                <Alert
+                  type="error"
+                  message={errorMessage}
                   style={{
-                    marginTop: -15,
+                    marginBottom: 10,
+                    width: 400,
                   }}
-                >
-                  <Typography.Paragraph>
-                    It's time to regain your fitness!
-                  </Typography.Paragraph>
-                </Row>
-                {loginError && (
-                  <Row justify="center">
-                    <Alert
-                      type="error"
-                      message={errorMessage}
-                      style={{
-                        justify: "center",
-                        marginBottom: 10,
-                        width: "500px",
-                      }}
-                      banner
-                    />
-                  </Row>
-                )}
-
-                <Row justify="center">
-                  <Col style={{ width: "90%", marginLeft: -80 }}>
-                    <Form
-                      name="basic"
-                      labelCol={{ span: 8 }}
-                      wrapperCol={{ span: 16 }}
-                      initialValues={{ remember: true }}
-                      onFinish={onFinish}
-                      autoComplete="off"
-                      requiredMark={false}
-                    >
-                      <Form.Item
-                        label="Email"
-                        name="email"
-                        validateTrigger={["onBlur"]}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please input your email!",
-                          },
-                          { type: "email", message: "Email is invalid" },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                      <Form.Item
-                        label="Password"
-                        name="password"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please input your password!",
-                          },
-                        ]}
-                      >
-                        <Input.Password />
-                      </Form.Item>
-                      <Row
-                        justify="center"
-                        style={{
-                          paddingBottom: 10,
-                          marginLeft: 55,
-                          position: "relative",
-                        }}
-                      >
-                        <Link to="/forgot-password">Forgot your password?</Link>
-                      </Row>
-                      <Form.Item
-                        style={{ justifyItems: "center" }}
-                        label={null}
-                      >
-                        <Button type="primary" htmlType="submit">
-                          Submit
-                        </Button>
-                      </Form.Item>
-                      <Row
-                        justify="center"
-                        style={{
-                          paddingBottom: 10,
-                          marginTop: -15,
-                          marginLeft: 55,
-                          position: "relative",
-                        }}
-                      >
-                        <Typography.Paragraph>
-                          Don't have an account ?{" "}
-                          <Link to="/create-account">
-                            <u>Create Account!</u>
-                          </Link>
-                        </Typography.Paragraph>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </Col>
+                  banner
+                />
+              </Row>
+            )}
+            <Form.Item
+              label="Email"
+              name="email"
+              validateTrigger={["onBlur"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your email!",
+                },
+                { type: "email", message: "Email is invalid" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              validateTrigger={["onBlur"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Row>
+              <Text style={{ marginBottom: 10 }}>
+                <Link to="/forgot-password">Forgot your password?</Link>
+              </Text>
             </Row>
-          </Col>
-          <Col span={12}>
-            <img alt="avatar" src={LoginImg} style={imgStyle} />
-          </Col>
+            <Form.Item label={null}>
+              <Button type="primary" htmlType="submit" block>
+                Submit
+              </Button>
+            </Form.Item>
+            <Text>
+              Don't have an account ?{" "}
+              <Link to={"/create-account"}>Create Account!</Link>
+            </Text>
+          </Form>
         </Row>
-      </Content>
-    </Layout>
+      </Col>
+    </Row>
   );
 };
 
