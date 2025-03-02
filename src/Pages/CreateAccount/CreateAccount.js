@@ -1,27 +1,28 @@
-import { Alert, Button, Divider, Form, Input, Row, Typography } from "antd";
-import { auth } from "../../firebase.js";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { Link, useNavigate } from "react-router-dom";
-import CreateAccountImg from "../../Logo/CreateAccount.jpg";
-import "./CreateAccount.css";
-import { useState } from "react";
-import authErrors from "../../data/firebase-error-meassages.js";
-import AuthPage from "../AuthPage/AuthPage.js";
+import { Alert, Button, Divider, Form, Input, Row, Typography } from 'antd';
+import { auth } from '../../firebase.js';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import createAccountImg from '../../Logo/createAccount.jpg';
+import './CreateAccount.css';
+import { useState } from 'react';
+import authErrors from '../../data/firebase-error-meassages.js';
+import AuthPageLayout from '../AuthPageLayout/AuthPageLayout.js';
 const { Title, Text } = Typography;
 
 const CreateAccount = () => {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onFinish = async (values) => {
     await createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
+        setErrorMessage('');
         const user = userCredential.user;
         updateProfile(user, {
           displayName: values.name,
         }).then(() => {
-          localStorage.setItem("token-info", JSON.stringify(user));
-          navigate("/home");
+          localStorage.setItem('token-info', JSON.stringify(user));
+          navigate('/');
         });
       })
       .catch((error) => {
@@ -32,7 +33,7 @@ const CreateAccount = () => {
   };
 
   return (
-    <AuthPage url={CreateAccountImg}>
+    <AuthPageLayout url={createAccountImg}>
       <Form
         name="basic"
         layout="vertical"
@@ -46,8 +47,7 @@ const CreateAccount = () => {
         <Title>Sign In</Title>
         <Title level={5}>Welcome to Fitness Tracker!</Title>
         <Text>
-          Join us to kickstart your fitness journey! Set goals, customize
-          workouts, and track progress—all in one place.
+          Join us to kickstart your fitness journey! Set goals, customize workouts, and track progress—all in one place.
         </Text>
         <Divider />
         {errorMessage && (
@@ -66,11 +66,11 @@ const CreateAccount = () => {
         <Form.Item
           label="Name"
           name="name"
-          validateTrigger={["onBlur"]}
+          validateTrigger={['onBlur']}
           rules={[
             {
               required: true,
-              message: "Please input your name!",
+              message: 'Please input your name!',
             },
           ]}
         >
@@ -79,13 +79,13 @@ const CreateAccount = () => {
         <Form.Item
           label="Email"
           name="email"
-          validateTrigger={["onBlur"]}
+          validateTrigger={['onBlur']}
           rules={[
             {
               required: true,
-              message: "Please input your email!",
+              message: 'Please input your email!',
             },
-            { type: "email", message: "Email is invalid" },
+            { type: 'email', message: 'Email is invalid' },
           ]}
         >
           <Input />
@@ -93,11 +93,11 @@ const CreateAccount = () => {
         <Form.Item
           label="Password"
           name="password"
-          validateTrigger={["onBlur"]}
+          validateTrigger={['onBlur']}
           rules={[
             {
               required: true,
-              message: "Please input your password!",
+              message: 'Please input your password!',
             },
           ]}
         >
@@ -109,10 +109,10 @@ const CreateAccount = () => {
           </Button>
         </Form.Item>
         <Text>
-          Already have an account? <Link to={"/login"}>Login!</Link>
+          Already have an account? <Link to={'/login'}>Login!</Link>
         </Text>
       </Form>
-    </AuthPage>
+    </AuthPageLayout>
   );
 };
 
