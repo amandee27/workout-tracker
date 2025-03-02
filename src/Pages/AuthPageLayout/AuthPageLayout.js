@@ -1,15 +1,15 @@
-import { Col, Row } from "antd";
+import { Col, Row } from 'antd';
 
 const formHalf = {
-  height: "100vh",
+  height: '100vh',
 };
 
-const AuthPage = ({ children, url }) => {
-  var imageHalf = {
+const AuthPageLayout = ({ children, url }) => {
+  const imageHalf = {
     backgroundImage: `url(${url})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    height: "100vh",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    height: '100vh',
   };
   return (
     <Row className="container">
@@ -23,4 +23,4 @@ const AuthPage = ({ children, url }) => {
   );
 };
 
-export default AuthPage;
+export default AuthPageLayout;
