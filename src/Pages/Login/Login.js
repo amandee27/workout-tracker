@@ -1,22 +1,23 @@
-import { Alert, Button, Divider, Form, Input, Row, Typography } from "antd";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
-import { Link, useNavigate } from "react-router-dom";
-import LoginImg from "../../Logo/LoginPage.jpg";
-import { useState } from "react";
-import authErrors from "../../data/firebase-error-meassages.js";
-import AuthPage from "../AuthPage/AuthPage.js";
+import { Alert, Button, Divider, Form, Input, Row, Typography } from 'antd';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
+import { Link, useNavigate } from 'react-router-dom';
+import loginImg from '../../Logo/loginPage.jpg';
+import { useState } from 'react';
+import authErrors from '../../data/firebase-error-meassages.js';
+import AuthPageLayout from '../AuthPageLayout/AuthPageLayout.js';
 const { Title, Text } = Typography;
 
 const Login = () => {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const onFinish = (values) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
+        setErrorMessage('');
         const user = userCredential.user;
-        localStorage.setItem("token-info", JSON.stringify(user));
-        navigate("/home");
+        localStorage.setItem('token-info', JSON.stringify(user));
+        navigate('/');
       })
       .catch((error) => {
         let errorCode = error.code;
@@ -26,7 +27,7 @@ const Login = () => {
   };
 
   return (
-    <AuthPage url={LoginImg}>
+    <AuthPageLayout url={loginImg}>
       <Form
         name="basic"
         layout="vertical"
@@ -40,8 +41,8 @@ const Login = () => {
         <Title>Login</Title>
         <Title level={5}>Hello, Welcome Back!</Title>
         <Text>
-          It's time to regain your fitness! Log in to track progress, reach your
-          goals, and access personalized workout plans.
+          It's time to regain your fitness! Log in to track progress, reach your goals, and access personalized workout
+          plans.
         </Text>
         <Divider />
         {errorMessage && (
@@ -60,13 +61,13 @@ const Login = () => {
         <Form.Item
           label="Email"
           name="email"
-          validateTrigger={["onBlur"]}
+          validateTrigger={['onBlur']}
           rules={[
             {
               required: true,
-              message: "Please input your email!",
+              message: 'Please input your email!',
             },
-            { type: "email", message: "Email is invalid" },
+            { type: 'email', message: 'Email is invalid' },
           ]}
         >
           <Input />
@@ -74,11 +75,11 @@ const Login = () => {
         <Form.Item
           label="Password"
           name="password"
-          validateTrigger={["onBlur"]}
+          validateTrigger={['onBlur']}
           rules={[
             {
               required: true,
-              message: "Please input your password!",
+              message: 'Please input your password!',
             },
           ]}
         >
@@ -95,11 +96,10 @@ const Login = () => {
           </Button>
         </Form.Item>
         <Text>
-          Don't have an account ?{" "}
-          <Link to={"/create-account"}>Create Account!</Link>
+          Don't have an account ? <Link to={'/create-account'}>Create Account!</Link>
         </Text>
       </Form>
-    </AuthPage>
+    </AuthPageLayout>
   );
 };
 
