@@ -1,31 +1,75 @@
-import { CalendarOutlined, MenuOutlined, ScheduleOutlined } from '@ant-design/icons';
-import { Flex, Menu, Typography } from 'antd';
+import {
+  CalendarOutlined,
+  MenuOutlined,
+  ScheduleOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from '@ant-design/icons';
+import { Flex, Menu, Typography, Button } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { NavLink } from 'react-router-dom';
-import logo from '../Logo/NameLogo.png';
+import { NavLink, useNavigate } from 'react-router-dom';
+import logo from '../Logo/heart.png';
+import { useState } from 'react';
+
+const floatMenuCollapseButton = {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+};
 
 const SideNavBar = () => {
-  let tokenInfo = JSON.parse(localStorage.getItem('token-info'));
-  let displayName = tokenInfo.displayName;
+  const [collapsed, setCollapsed] = useState(true);
+  const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate('/');
+  };
+
   return (
-    <Sider breakpoint="sm" collapsible collapsedWidth="0" theme="light">
-      <Flex justify="center" align="center">
-        <img src={logo} style={{ width: 15, height: 15, marginTop: 15, marginRight: 5 }}></img>
-        <Typography.Title level={4} style={{ color: 'black' }}>
-          Fitness Logger
-        </Typography.Title>
+    <Sider
+      trigger={null}
+      breakpoint="sm"
+      collapsible
+      theme="light"
+      collapsed={!collapsed}
+      style={{ boxShadow: '0 0 8px 2px rgba(0, 0, 0, 0.05)' }}
+    >
+      <Flex justify="center" align="center" onClick={navigateHome}>
+        <img src={logo} style={{ width: 25, height: 25 }}></img>
+        {collapsed && (
+          <Typography.Title level={4} style={{ color: 'black', paddingLeft: 10, marginTop: 15, marginBottom: 15 }}>
+            Fitness Logger
+          </Typography.Title>
+        )}
       </Flex>
-      <Menu theme="light" mode="inline" defaultSelectedKeys={['4']}>
-        <Menu.Item key="2" icon={<MenuOutlined />}>
-          <NavLink to="/exercises">Exercises</NavLink>
-        </Menu.Item>
-        <Menu.Item key="3" icon={<ScheduleOutlined />}>
-          <NavLink to="/logs">Logs</NavLink>
-        </Menu.Item>
-        <Menu.Item key="4" icon={<CalendarOutlined />}>
-          <NavLink to="/calendar">Calendar</NavLink>
-        </Menu.Item>
-      </Menu>
+      <Menu
+        theme="light"
+        mode="inline"
+        defaultSelectedKeys={['1']}
+        items={[
+          {
+            key: '1',
+            icon: <MenuOutlined />,
+            label: <NavLink to="/exercises">Exercises</NavLink>,
+          },
+          {
+            key: '2',
+            icon: <ScheduleOutlined />,
+            label: <NavLink to="/logs">Logs</NavLink>,
+          },
+          {
+            key: '3',
+            icon: <CalendarOutlined />,
+            label: <NavLink to="/calendar">Calendar</NavLink>,
+          },
+        ]}
+      ></Menu>
+      <Button
+        style={floatMenuCollapseButton}
+        variant="solid"
+        type="text"
+        onClick={() => setCollapsed(!collapsed)}
+        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+      />
     </Sider>
   );
 };
