@@ -20,6 +20,7 @@ const Logs = () => {
 
   const [exerciseList, setExerciseList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
     getDocs(colRef)
@@ -66,6 +67,22 @@ const Logs = () => {
             className="add"
             style={{ maxWidth: 600 }}
             onFinish={onFinish}
+            onFieldsChange={(allFeilds) => {
+              let allValidated =
+                allFeilds.find((item) => item.name[0] === 'sets').validated &&
+                allFeilds.find((item) => item.name[0] === 'reps').validated &&
+                allFeilds.find((item) => item.name[0] === 'date').validated &&
+                allFeilds.find((item) => item.name[0] === 'selectWorkout').validated;
+              let setsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'sets').errors.length);
+              let repsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'reps').errors.length);
+              let dateValidation = Boolean(allFeilds.find((item) => item.name[0] === 'date').errors.length);
+              let selectWorkoutValidation = Boolean(
+                allFeilds.find((item) => item.name[0] === 'selectWorkout').errors.length
+              );
+              let hasFeildError = selectWorkoutValidation || setsValidation || repsValidation || dateValidation;
+              let formDisabled = allValidated && !hasFeildError;
+              setButtonDisabled(!formDisabled);
+            }}
           >
             <Form.Item
               label="Workout"
@@ -112,7 +129,7 @@ const Logs = () => {
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" disabled={buttonDisabled}>
                 Submit
               </Button>
             </Form.Item>
