@@ -67,7 +67,7 @@ const Logs = () => {
             className="add"
             style={{ maxWidth: 600 }}
             onFinish={onFinish}
-            onFieldsChange={(allFeilds) => {
+            onFieldsChange={(chagedFeilds, allFeilds) => {
               let allValidated =
                 allFeilds.find((item) => item.name[0] === 'sets').validated &&
                 allFeilds.find((item) => item.name[0] === 'reps').validated &&
@@ -88,7 +88,7 @@ const Logs = () => {
               label="Workout"
               name="selectWorkout"
               validateTrigger={['onBlur']}
-              rules={[{ required: true, message: 'Please select workout!' }]}
+              rules={[{ required: true, message: 'Please input!' }]}
             >
               <Select labelInValue placeholder="Select a workout" options={exerciseList} />
             </Form.Item>
