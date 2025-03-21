@@ -1,26 +1,36 @@
-import { DatePicker, Form, Input, InputNumber, Layout, Select, Button, Typography } from 'antd';
+import { DatePicker, Form, Input, InputNumber, Layout, Select, Button, Modal, Card, Row, Col } from 'antd';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../../firebase';
+
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 6 },
+    sm: { span: 4 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 14 },
+    sm: { span: 20 },
+  },
+};
+
+const formItemLayoutWithOutLabel = {
+  wrapperCol: {
+    xs: { span: 24, offset: 0 },
+    sm: { span: 20, offset: 4 },
   },
 };
 
 const Logs = () => {
   const [form] = Form.useForm();
+  const uid = JSON.parse(localStorage.getItem('token-info')).uid;
   const colRef = collection(db, 'Exercises');
-  const colRef2 = collection(db, 'Users', '38vyDBBl84OrPamtTyNnlgd3HJQ2', 'Logs');
-
+  const colRef2 = collection(db, 'Logs');
   const [exerciseList, setExerciseList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getDocs(colRef)
@@ -44,96 +54,180 @@ const Logs = () => {
 
   const onFinish = (values, e) => {
     addDoc(colRef2, {
+      uid: uid,
       date: values.date.format('YYYY-MM-DD HH:mm:ss'),
-      notes: values.notes,
-      reps: values.reps,
-      w_id: values.selectWorkout.key,
-      weight: values.weight,
-      workout: values.selectWorkout.label,
+      notes: values.notes || '',
+      workout: values.workout.map((work) => {
+        return {
+          exercise: work.selectExercise.label,
+          exerciseId: work.selectExercise.value,
+          sets: work.sets.map((set) => {
+            return { reps: set.reps, weight: set.weight };
+          }),
+        };
+      }),
     }).then(() => {
       form.resetFields();
+      setOpen(false);
     });
   };
 
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setButtonDisabled(true);
+    setOpen(false);
+  };
+
   return (
-    <Layout style={{ minHeight: '100vh' }} align="center">
+    <Layout style={{ minHeight: '100vh', padding: 10 }} align="center">
       {!loading && (
         <div>
-          <Typography.Title>Log Workout</Typography.Title>
-          <Form
-            {...formItemLayout}
-            form={form}
-            variant="outlined"
-            className="add"
-            style={{ maxWidth: 600 }}
-            onFinish={onFinish}
-            onFieldsChange={(chagedFeilds, allFeilds) => {
-              let allValidated =
-                allFeilds.find((item) => item.name[0] === 'sets').validated &&
-                allFeilds.find((item) => item.name[0] === 'reps').validated &&
-                allFeilds.find((item) => item.name[0] === 'date').validated &&
-                allFeilds.find((item) => item.name[0] === 'selectWorkout').validated;
-              let setsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'sets').errors.length);
-              let repsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'reps').errors.length);
-              let dateValidation = Boolean(allFeilds.find((item) => item.name[0] === 'date').errors.length);
-              let selectWorkoutValidation = Boolean(
-                allFeilds.find((item) => item.name[0] === 'selectWorkout').errors.length
-              );
-              let hasFeildError = selectWorkoutValidation || setsValidation || repsValidation || dateValidation;
-              let formDisabled = allValidated && !hasFeildError;
-              setButtonDisabled(!formDisabled);
-            }}
+          <Row justify="end">
+            <Col span={4}>
+              <Button style={{ margin: 10 }} onClick={showModal}>
+                Log Workout
+              </Button>
+            </Col>
+          </Row>
+          <Modal
+            open={open}
+            okText="Submit"
+            okButtonProps={{ autoFocus: true, htmlType: 'submit', disabled: buttonDisabled }} // {/* */}
+            confirmLoading={loading}
+            onCancel={handleCancel}
+            destroyOnClose
+            title="Log Workout"
+            modalRender={(dom) => (
+              <Form
+                form={form}
+                variant="outlined"
+                className="add"
+                style={{ maxWidth: 600 }}
+                onFinish={(values) => onFinish(values)}
+                clearOnDestroy
+                initialValues={{ weight: 0, workouts: [{}] }}
+                onFieldsChange={(chagedFeilds, allFeilds) => {
+                  let val = allFeilds.map((feild) => {
+                    return (
+                      (feild.name.includes('date') && feild.errors.length > 0) ||
+                      (feild.name.includes('selectExercise') && feild.errors.length > 0) ||
+                      (feild.name.includes('sets') && feild.errors.length > 0) ||
+                      (feild.name.includes('reps') && feild.errors.length > 0)
+                    );
+                  });
+
+                  val.includes(true) ? setButtonDisabled(true) : setButtonDisabled(false);
+                }}
+              >
+                {dom}
+              </Form>
+            )}
           >
             <Form.Item
-              label="Workout"
-              name="selectWorkout"
-              validateTrigger={['onBlur']}
-              rules={[{ required: true, message: 'Please input!' }]}
-            >
-              <Select labelInValue placeholder="Select a workout" options={exerciseList} />
-            </Form.Item>
-
-            <Form.Item
-              label="Sets"
-              name="sets"
-              validateTrigger={['onBlur']}
-              rules={[{ required: true, message: 'Please input no. of sets!' }]}
-            >
-              <InputNumber style={{ width: '100%' }} min="0" />
-            </Form.Item>
-
-            <Form.Item
-              label="Reps"
-              name="reps"
-              validateTrigger={['onBlur']}
-              rules={[{ required: true, message: 'Please input reps!' }]}
-            >
-              <InputNumber style={{ width: '100%' }} min="0" />
-            </Form.Item>
-
-            <Form.Item label="Weight" name="weight">
-              <InputNumber style={{ width: '100%' }} min="0" />
-            </Form.Item>
-
-            <Form.Item label="Notes" name="notes">
-              <Input.TextArea />
-            </Form.Item>
-
-            <Form.Item
+              {...formItemLayout}
               label="Date"
               name="date"
               validateTrigger={['onBlur']}
               rules={[{ required: true, message: 'Please input date!' }]}
             >
-              <DatePicker style={{ width: '100%' }} />
+              <DatePicker allowClear={false} showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item {...formItemLayout} label="Notes" name="notes">
+              <Input.TextArea />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-              <Button type="primary" htmlType="submit" disabled={buttonDisabled}>
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
+            <Form.List name="workout">
+              {(fields, { add, remove }) => (
+                <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
+                  {fields.map((field) => (
+                    <Card
+                      size="small"
+                      title={`Exercise ${field.name + 1}`}
+                      key={field.key}
+                      extra={
+                        <CloseOutlined
+                          onClick={() => {
+                            remove(field.name);
+                          }}
+                        />
+                      }
+                    >
+                      <Form.Item
+                        {...formItemLayout}
+                        label="Exercise"
+                        name={[field.name, 'selectExercise']}
+                        validateTrigger={['onBlur']}
+                        rules={[{ required: true, message: 'Please input!' }]}
+                      >
+                        <Select labelInValue placeholder="Select a exercise" options={exerciseList} />
+                      </Form.Item>
+
+                      <Form.List name={[field.name, 'sets']}>
+                        {(fields, { add, remove }) => (
+                          <>
+                            {fields.length > 0 && (
+                              <Row align="middle" style={{ marginBottom: '16px' }}>
+                                <Col offset={3} span={10} style={{ paddingRight: '16px' }}>
+                                  Reps
+                                </Col>
+                                <Col span={10} style={{ paddingRight: '16px' }}>
+                                  Weight
+                                </Col>
+                              </Row>
+                            )}
+                            {fields.map(({ key, name, ...restField }) => (
+                              <div key={key}>
+                                <Row align="middle" style={{ marginBottom: '12px' }}>
+                                  <Col span={3}>{`Set ${key + 1}:`}</Col>
+                                  <Col span={10} style={{ paddingRight: '16px' }}>
+                                    <Form.Item
+                                      {...restField}
+                                      noStyle
+                                      name={[name, 'reps']}
+                                      validateTrigger={['onBlur']}
+                                      rules={[{ required: true, message: 'Missing first name' }]}
+                                    >
+                                      <InputNumber min={0} defaultValue={0} placeholder="reps" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={10} style={{ paddingRight: '16px' }}>
+                                    <Form.Item
+                                      noStyle
+                                      {...restField}
+                                      name={[name, 'weight']}
+                                      validateTrigger={['onBlur']}
+                                      rules={[{ required: true, message: 'Missing last name' }]}
+                                    >
+                                      <InputNumber min={0} defaultValue={0} placeholder="weight" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={1}>
+                                    <CloseOutlined onClick={() => remove(name)} />
+                                  </Col>
+                                </Row>
+                              </div>
+                            ))}
+                            <Form.Item>
+                              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                Add Set
+                              </Button>
+                            </Form.Item>
+                          </>
+                        )}
+                      </Form.List>
+                    </Card>
+                  ))}
+
+                  <Button style={{ marginBottom: 10 }} type="dashed" onClick={() => add()} block>
+                    + Add More Exercises
+                  </Button>
+                </div>
+              )}
+            </Form.List>
+          </Modal>
         </div>
       )}
     </Layout>
