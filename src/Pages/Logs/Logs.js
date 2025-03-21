@@ -188,9 +188,14 @@ const Logs = () => {
                                       noStyle
                                       name={[name, 'reps']}
                                       validateTrigger={['onBlur']}
-                                      rules={[{ required: true, message: 'Missing first name' }]}
+                                      rules={[{ required: true, message: 'Please input weight!' }]}
                                     >
-                                      <InputNumber min={0} defaultValue={0} placeholder="reps" />
+                                      <InputNumber
+                                        min={0}
+                                        defaultValue={0}
+                                        placeholder="reps"
+                                        style={{ width: '100%' }}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col span={10} style={{ paddingRight: '16px' }}>
@@ -199,9 +204,14 @@ const Logs = () => {
                                       {...restField}
                                       name={[name, 'weight']}
                                       validateTrigger={['onBlur']}
-                                      rules={[{ required: true, message: 'Missing last name' }]}
+                                      rules={[{ required: true, message: 'Please input weight!' }]}
                                     >
-                                      <InputNumber min={0} defaultValue={0} placeholder="weight" />
+                                      <InputNumber
+                                        min={0}
+                                        defaultValue={0}
+                                        placeholder="weight"
+                                        style={{ width: '100%' }}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col span={1}>
