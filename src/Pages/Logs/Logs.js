@@ -1,8 +1,7 @@
 import { Layout, Button, Row, Col, Table, Space } from 'antd';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../../firebase';
-
 import ColumnGroup from 'antd/es/table/ColumnGroup';
 import Column from 'antd/es/table/Column';
 import LogWorkoutModal from './LogWorkoutModal';
@@ -217,8 +216,16 @@ const Logs = () => {
     console.log('Edit data', data);
   };
 
-  const deleteData = () => {
-    console.log('Delete data');
+  const deleteData = (data) => {
+    setLoading(true);
+    const docRef = doc(db, 'Logs', data.id);
+    deleteDoc(docRef)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
@@ -253,7 +260,7 @@ const Logs = () => {
               render={(_, record) => (
                 <Space size="middle">
                   <a onClick={() => showEditDataModal(record)}>Edit </a>
-                  <a onClick={deleteData}>Delete</a>
+                  <a onClick={() => deleteData(record)}>Delete</a>
                 </Space>
               )}
             />
