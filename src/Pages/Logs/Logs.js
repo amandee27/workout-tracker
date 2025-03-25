@@ -1,19 +1,11 @@
-import { DatePicker, Form, Input, InputNumber, Layout, Select, Button, Modal, Card, Row, Col } from 'antd';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { Layout, Button, Row, Col, Table, Space } from 'antd';
+import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../../firebase';
 
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 4 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 20 },
-  },
-};
+import ColumnGroup from 'antd/es/table/ColumnGroup';
+import Column from 'antd/es/table/Column';
+import LogWorkoutModal from './LogWorkoutModal';
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
@@ -22,21 +14,160 @@ const formItemLayoutWithOutLabel = {
   },
 };
 
+const data2 = [
+  {
+    notes: 'test#',
+    date: new Date('2025-03-19 00:00:00').toLocaleDateString(),
+    time: new Date('2025-03-19 00:00:00').toLocaleTimeString(),
+    uid: '38vyDBBl84OrPamtTyNnlgd3HJQ2',
+    workout: [
+      {
+        exerciseId: 'e_id10',
+        exercise: 'Leg lifts',
+        sets: [
+          {
+            weight: 1,
+            reps: 1,
+          },
+        ],
+      },
+      {
+        exerciseId: 'e_id4',
+        exercise: 'Squats',
+        sets: [
+          {
+            reps: 1,
+            weight: 1,
+          },
+          {
+            weight: 1,
+            reps: 1,
+          },
+        ],
+      },
+    ],
+    id: 'vMYirJtzEsOlmloLbyvQ',
+  },
+  {
+    notes: 'test',
+    workout: [
+      {
+        exerciseId: 'e_id11',
+        sets: [
+          {
+            weight: 1,
+            reps: 1,
+          },
+          {
+            reps: 2,
+            weight: 2,
+          },
+        ],
+        exercise: 'Russian twist',
+      },
+      {
+        exercise: 'Glute Bridge',
+        sets: [
+          {
+            weight: 1,
+            reps: 1,
+          },
+          {
+            weight: 4,
+            reps: 4,
+          },
+        ],
+        exerciseId: 'e_id12',
+      },
+    ],
+    uid: '38vyDBBl84OrPamtTyNnlgd3HJQ2',
+    date: new Date('2025-03-21 00:00:00').toLocaleDateString(),
+    time: new Date('2025-03-21 00:00:00').toLocaleTimeString(),
+    id: 'vd3uXgTBbUIF8PZFJE0z',
+  },
+  {
+    workout: [
+      {
+        exercise: 'Bird dog Exercise',
+        sets: [
+          {
+            weight: 2,
+            reps: 1,
+          },
+        ],
+        exerciseId: 'e_id14',
+      },
+      {
+        sets: [
+          {
+            weight: 2,
+            reps: 1,
+          },
+        ],
+        exercise: 'Russian twist',
+        exerciseId: 'e_id11',
+      },
+    ],
+    uid: '38vyDBBl84OrPamtTyNnlgd3HJQ2',
+    notes: 'test 3',
+    date: new Date('2025-03-21 00:00:00').toLocaleDateString(),
+    time: new Date('2025-03-21 00:00:00').toLocaleTimeString(),
+    id: 'vrzKBoEU4g70xDU8sB4z',
+  },
+  {
+    date: new Date('2025-03-21 00:00:00').toLocaleDateString(),
+    time: new Date('2025-03-21 00:00:00').toLocaleTimeString(),
+    notes: 'test 2',
+    workout: [
+      {
+        sets: [
+          {
+            weight: 1,
+            reps: 1,
+          },
+          {
+            weight: 2,
+            reps: 1,
+          },
+        ],
+        exercise: 'incline bench press',
+        exerciseId: 'e_id1',
+      },
+      {
+        exerciseId: 'e_id12',
+        exercise: 'Glute Bridge',
+        sets: [
+          {
+            weight: 2,
+            reps: 2,
+          },
+          {
+            weight: 1,
+            reps: 1,
+          },
+        ],
+      },
+    ],
+    uid: '38vyDBBl84OrPamtTyNnlgd3HJQ2',
+    id: 'ypWzHDHJSSKLY2LuYLUG',
+  },
+];
+
 const Logs = () => {
-  const [form] = Form.useForm();
-  const uid = JSON.parse(localStorage.getItem('token-info')).uid;
   const colRef = collection(db, 'Exercises');
   const colRef2 = collection(db, 'Logs');
   const [exerciseList, setExerciseList] = useState([]);
+  const [loggedWorkoutList, setLoggedWorkoutList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [open, setOpen] = useState(false);
+  const [openTableModal, setOpenTableModal] = useState(false);
 
   useEffect(() => {
     getDocs(colRef)
       .then((snapshot) => {
         let exercisesList = [];
         let workoutList = [];
+
         snapshot.docs.forEach((doc) => {
           exercisesList.push({ ...doc.data(), id: doc.id });
         });
@@ -50,35 +181,44 @@ const Logs = () => {
       .catch((err) => {
         console.log(err.message);
       });
-  }, [loading]);
 
-  const onFinish = (values, e) => {
-    addDoc(colRef2, {
-      uid: uid,
-      date: values.date.format('YYYY-MM-DD HH:mm:ss'),
-      notes: values.notes || '',
-      workout: values.workout.map((work) => {
-        return {
-          exercise: work.selectExercise.label,
-          exerciseId: work.selectExercise.value,
-          sets: work.sets.map((set) => {
-            return { reps: set.reps, weight: set.weight };
-          }),
-        };
-      }),
-    }).then(() => {
-      form.resetFields();
-      setOpen(false);
-    });
-  };
+    getDocs(colRef2)
+      .then((snapshot) => {
+        setLoading(true);
+        let loggedWorkouts = [];
+        let updatedLoggedWorkout = [];
+
+        snapshot.docs.forEach((doc) => {
+          console.log({ ...doc.data() });
+          loggedWorkouts.push({ ...doc.data(), id: doc.id });
+        });
+
+        updatedLoggedWorkout = loggedWorkouts.map((workout) => {
+          console.log('w', loggedWorkouts);
+          workout['time'] = new Date(workout.date).toLocaleTimeString();
+          workout['date'] = new Date(workout.date).toLocaleDateString();
+          return workout;
+        });
+        console.log('new', updatedLoggedWorkout);
+        setLoggedWorkoutList(updatedLoggedWorkout);
+        setLoading(false);
+        console.log('loggedWorkoutList', loggedWorkoutList);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [loading]);
 
   const showModal = () => {
     setOpen(true);
   };
 
-  const handleCancel = () => {
-    setButtonDisabled(true);
-    setOpen(false);
+  const showEditDataModal = (data) => {
+    console.log('Edit data', data);
+  };
+
+  const deleteData = () => {
+    console.log('Delete data');
   };
 
   return (
@@ -92,152 +232,32 @@ const Logs = () => {
               </Button>
             </Col>
           </Row>
-          <Modal
+          <LogWorkoutModal
             open={open}
-            okText="Submit"
-            okButtonProps={{ autoFocus: true, htmlType: 'submit', disabled: buttonDisabled }} // {/* */}
-            confirmLoading={loading}
-            onCancel={handleCancel}
-            destroyOnClose
-            title="Log Workout"
-            modalRender={(dom) => (
-              <Form
-                form={form}
-                variant="outlined"
-                className="add"
-                style={{ maxWidth: 600 }}
-                onFinish={(values) => onFinish(values)}
-                clearOnDestroy
-                initialValues={{ weight: 0, workouts: [{}] }}
-                onFieldsChange={(chagedFeilds, allFeilds) => {
-                  let val = allFeilds.map((feild) => {
-                    return (
-                      (feild.name.includes('date') && feild.errors.length > 0) ||
-                      (feild.name.includes('selectExercise') && feild.errors.length > 0) ||
-                      (feild.name.includes('sets') && feild.errors.length > 0) ||
-                      (feild.name.includes('reps') && feild.errors.length > 0)
-                    );
-                  });
+            loading={loading}
+            setOpen={setOpen}
+            exerciseList={exerciseList}
+            colRef2={colRef2}
+            setLoading={setLoading}
+          ></LogWorkoutModal>
 
-                  val.includes(true) ? setButtonDisabled(true) : setButtonDisabled(false);
-                }}
-              >
-                {dom}
-              </Form>
-            )}
-          >
-            <Form.Item
-              {...formItemLayout}
-              label="Date"
-              name="date"
-              validateTrigger={['onBlur']}
-              rules={[{ required: true, message: 'Please input date!' }]}
-            >
-              <DatePicker allowClear={false} showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item {...formItemLayout} label="Notes" name="notes">
-              <Input.TextArea />
-            </Form.Item>
-
-            <Form.List name="workout">
-              {(fields, { add, remove }) => (
-                <div style={{ display: 'flex', rowGap: 16, flexDirection: 'column' }}>
-                  {fields.map((field) => (
-                    <Card
-                      size="small"
-                      title={`Exercise ${field.name + 1}`}
-                      key={field.key}
-                      extra={
-                        <CloseOutlined
-                          onClick={() => {
-                            remove(field.name);
-                          }}
-                        />
-                      }
-                    >
-                      <Form.Item
-                        {...formItemLayout}
-                        label="Exercise"
-                        name={[field.name, 'selectExercise']}
-                        validateTrigger={['onBlur']}
-                        rules={[{ required: true, message: 'Please input!' }]}
-                      >
-                        <Select labelInValue placeholder="Select a exercise" options={exerciseList} />
-                      </Form.Item>
-
-                      <Form.List name={[field.name, 'sets']}>
-                        {(fields, { add, remove }) => (
-                          <>
-                            {fields.length > 0 && (
-                              <Row align="middle" style={{ marginBottom: '16px' }}>
-                                <Col offset={3} span={10} style={{ paddingRight: '16px' }}>
-                                  Reps
-                                </Col>
-                                <Col span={10} style={{ paddingRight: '16px' }}>
-                                  Weight
-                                </Col>
-                              </Row>
-                            )}
-                            {fields.map(({ key, name, ...restField }) => (
-                              <div key={key}>
-                                <Row align="middle" style={{ marginBottom: '12px' }}>
-                                  <Col span={3}>{`Set ${key + 1}:`}</Col>
-                                  <Col span={10} style={{ paddingRight: '16px' }}>
-                                    <Form.Item
-                                      {...restField}
-                                      noStyle
-                                      name={[name, 'reps']}
-                                      validateTrigger={['onBlur']}
-                                      rules={[{ required: true, message: 'Please input weight!' }]}
-                                    >
-                                      <InputNumber
-                                        min={0}
-                                        defaultValue={0}
-                                        placeholder="reps"
-                                        style={{ width: '100%' }}
-                                      />
-                                    </Form.Item>
-                                  </Col>
-                                  <Col span={10} style={{ paddingRight: '16px' }}>
-                                    <Form.Item
-                                      noStyle
-                                      {...restField}
-                                      name={[name, 'weight']}
-                                      validateTrigger={['onBlur']}
-                                      rules={[{ required: true, message: 'Please input weight!' }]}
-                                    >
-                                      <InputNumber
-                                        min={0}
-                                        defaultValue={0}
-                                        placeholder="weight"
-                                        style={{ width: '100%' }}
-                                      />
-                                    </Form.Item>
-                                  </Col>
-                                  <Col span={1}>
-                                    <CloseOutlined onClick={() => remove(name)} />
-                                  </Col>
-                                </Row>
-                              </div>
-                            ))}
-                            <Form.Item>
-                              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                Add Set
-                              </Button>
-                            </Form.Item>
-                          </>
-                        )}
-                      </Form.List>
-                    </Card>
-                  ))}
-
-                  <Button style={{ marginBottom: 10 }} type="dashed" onClick={() => add()} block>
-                    + Add More Exercises
-                  </Button>
-                </div>
+          <Table dataSource={loggedWorkoutList}>
+            <ColumnGroup title="Time Stamp">
+              <Column title="Date" dataIndex="date" key="date" />
+              <Column title="Time" dataIndex="time" key="time" />
+            </ColumnGroup>
+            <Column title="Notes" dataIndex="notes" key="notes" />
+            <Column
+              title="Action"
+              key="action"
+              render={(_, record) => (
+                <Space size="middle">
+                  <a onClick={() => showEditDataModal(record)}>Edit </a>
+                  <a onClick={deleteData}>Delete</a>
+                </Space>
               )}
-            </Form.List>
-          </Modal>
+            />
+          </Table>
         </div>
       )}
     </Layout>
