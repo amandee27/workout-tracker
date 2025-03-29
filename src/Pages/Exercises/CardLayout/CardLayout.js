@@ -1,10 +1,10 @@
-import { Card, DatePicker, Divider, Flex, Form, Input, InputNumber, Modal, theme, Tooltip } from 'antd';
+import { Card, DatePicker, Form, Input, InputNumber, Modal, theme, Tooltip } from 'antd';
 import { EditOutlined, EllipsisOutlined } from '@ant-design/icons';
-import Typography from 'antd/es/typography/Typography';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
+import Meta from 'antd/es/card/Meta';
 
 const { useToken } = theme;
 
@@ -98,117 +98,116 @@ const CardLayout = ({ exercise }) => {
   }, [exercise]);
 
   return (
-    <Card loading={loading} key={exercise.id} style={{ width: 350 }}>
-      <Flex vertical gap="middle" style={{ height: 500 }}>
-        <Flex vertical style={{ backgroundSize: 'cover', backgroundPosition: 'center', height: '100vh' }}>
-          <img alt="Card image" src={exercise.image} />
-        </Flex>
-        <Flex vertical gap={token.marginXXS}>
-          <Typography.Title level={4} align="center" style={{ marginBottom: -5 }}>
-            {exercise.name.toUpperCase()}
-          </Typography.Title>
+    <Card
+      hoverable
+      loading={loading}
+      key={exercise.id}
+      style={{ height: 500 }}
+      type="inner"
+      cover={<img alt="Card image" src={exercise.image} style={{ padding: 10 }} />}
+      actions={[
+        <Tooltip placement="bottom" title="Log Exercise">
+          <EditOutlined key="edit" onClick={showModal} />
+        </Tooltip>,
+        <Tooltip placement="bottom" title="Exercise details">
+          <EllipsisOutlined key="ellipsis" onClick={() => exerciseDetails(exercise.id)} />
+        </Tooltip>,
+      ]}
+    >
+      <div style={{ height: '100%', width: '100%' }}>
+        <Meta
+          title={exercise.name.toUpperCase()}
+          description={
+            <>
+              <b>Type : </b>
+              {exercise.type}
+              <br></br>
+              <b>Impact area : </b>
+              {exercise.impact_area}
+            </>
+          }
+        />
+      </div>
 
-          <Typography.Text align="center" type="secondary" style={styles.paragraph} strong>
-            <b>Type : </b>
-            {exercise.type}
-          </Typography.Text>
-          <Typography.Text align="center" type="secondary" style={styles.paragraph}>
-            <b>Impact area : </b>
-            {exercise.impact_area}
-          </Typography.Text>
-        </Flex>
-        <Divider />
-        <Flex horizontal="true" justify="center" align="center">
-          <Flex gap="large">
-            <Tooltip placement="bottom" title="Log Exercise">
-              <EditOutlined key="edit" onClick={showModal} />
-            </Tooltip>
-            <Divider type="vertical" />
-            <Tooltip placement="bottom" title="Exercise details">
-              <EllipsisOutlined key="ellipsis" onClick={() => exerciseDetails(exercise.id)} />
-            </Tooltip>
-            <Modal
-              open={open}
-              okText="Submit"
-              okButtonProps={{ autoFocus: true, htmlType: 'submit', disabled: buttonDisabled }}
-              confirmLoading={confirmLoading}
-              onCancel={handleCancel}
-              destroyOnClose
-              title="Log Workout"
-              modalRender={(dom) => (
-                <Form
-                  {...formItemLayout}
-                  form={form}
-                  variant="outlined"
-                  className="add"
-                  style={{ maxWidth: 600 }}
-                  onFinish={(values) => onCreate(values)}
-                  clearOnDestroy
-                  initialValues={{ weight: 0 }}
-                  onFieldsChange={(chagedFeilds, allFeilds) => {
-                    let allValidated =
-                      allFeilds.find((item) => item.name[0] === 'sets').validated &&
-                      allFeilds.find((item) => item.name[0] === 'reps').validated &&
-                      allFeilds.find((item) => item.name[0] === 'date').validated;
-                    let setsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'sets').errors.length);
-                    let repsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'reps').errors.length);
-                    let dateValidation = Boolean(allFeilds.find((item) => item.name[0] === 'date').errors.length);
-                    let hasFeildError = setsValidation || repsValidation || dateValidation;
-                    let formDisabled = !(allValidated && !hasFeildError);
-                    setButtonDisabled(formDisabled);
-                  }}
-                >
-                  {dom}
-                </Form>
-              )}
-            >
-              <Form.Item
-                label="Workout"
-                name="selectWorkout"
-                validateTrigger={['onBlur']}
-                rules={[{ message: 'Please input!' }]}
-              >
-                <Input defaultValue={exercise.name} readOnly />
-              </Form.Item>
+      <Modal
+        open={open}
+        okText="Submit"
+        okButtonProps={{ autoFocus: true, htmlType: 'submit', disabled: buttonDisabled }}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        destroyOnClose
+        title="Log Workout"
+        modalRender={(dom) => (
+          <Form
+            {...formItemLayout}
+            form={form}
+            variant="outlined"
+            className="add"
+            style={{ maxWidth: 600 }}
+            onFinish={(values) => onCreate(values)}
+            clearOnDestroy
+            initialValues={{ weight: 0 }}
+            onFieldsChange={(chagedFeilds, allFeilds) => {
+              let allValidated =
+                allFeilds.find((item) => item.name[0] === 'sets').validated &&
+                allFeilds.find((item) => item.name[0] === 'reps').validated &&
+                allFeilds.find((item) => item.name[0] === 'date').validated;
+              let setsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'sets').errors.length);
+              let repsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'reps').errors.length);
+              let dateValidation = Boolean(allFeilds.find((item) => item.name[0] === 'date').errors.length);
+              let hasFeildError = setsValidation || repsValidation || dateValidation;
+              let formDisabled = !(allValidated && !hasFeildError);
+              setButtonDisabled(formDisabled);
+            }}
+          >
+            {dom}
+          </Form>
+        )}
+      >
+        <Form.Item
+          label="Workout"
+          name="selectWorkout"
+          validateTrigger={['onBlur']}
+          rules={[{ message: 'Please input!' }]}
+        >
+          <Input defaultValue={exercise.name} readOnly />
+        </Form.Item>
 
-              <Form.Item
-                label="Sets"
-                name="sets"
-                validateTrigger={['onBlur']}
-                rules={[{ required: true, message: 'Please input no. of sets!' }]}
-              >
-                <InputNumber style={{ width: '100%' }} min="0" />
-              </Form.Item>
+        <Form.Item
+          label="Sets"
+          name="sets"
+          validateTrigger={['onBlur']}
+          rules={[{ required: true, message: 'Please input no. of sets!' }]}
+        >
+          <InputNumber style={{ width: '100%' }} min="0" />
+        </Form.Item>
 
-              <Form.Item
-                label="Reps"
-                name="reps"
-                validateTrigger={['onBlur']}
-                rules={[{ required: true, message: 'Please input reps!' }]}
-              >
-                <InputNumber style={{ width: '100%' }} min="0" />
-              </Form.Item>
+        <Form.Item
+          label="Reps"
+          name="reps"
+          validateTrigger={['onBlur']}
+          rules={[{ required: true, message: 'Please input reps!' }]}
+        >
+          <InputNumber style={{ width: '100%' }} min="0" />
+        </Form.Item>
 
-              <Form.Item label="Weight" name="weight">
-                <InputNumber style={{ width: '100%' }} min="0" />
-              </Form.Item>
+        <Form.Item label="Weight" name="weight">
+          <InputNumber style={{ width: '100%' }} min="0" />
+        </Form.Item>
 
-              <Form.Item label="Notes" name="notes">
-                <Input.TextArea />
-              </Form.Item>
+        <Form.Item label="Notes" name="notes">
+          <Input.TextArea />
+        </Form.Item>
 
-              <Form.Item
-                label="Date"
-                name="date"
-                validateTrigger={['onBlur']}
-                rules={[{ required: true, message: 'Please input date!' }]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Modal>
-          </Flex>
-        </Flex>
-      </Flex>
+        <Form.Item
+          label="Date"
+          name="date"
+          validateTrigger={['onBlur']}
+          rules={[{ required: true, message: 'Please input date!' }]}
+        >
+          <DatePicker style={{ width: '100%' }} />
+        </Form.Item>
+      </Modal>
     </Card>
   );
 };
