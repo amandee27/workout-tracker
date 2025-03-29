@@ -10,15 +10,13 @@ import {
 import Search from 'antd/es/transfer/search';
 import userImg from '../Logo/user.png';
 import { useNavigate } from 'react-router-dom';
+
 const { Header } = Layout;
+
 const items = [
   {
     key: '1',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        Profile
-      </a>
-    ),
+    label: 'Profile',
     icon: <UserOutlined />,
   },
   {
@@ -52,23 +50,18 @@ const HeaderNav = () => {
   let displayName = tokenInfo.displayName;
   const navigate = useNavigate();
   const handleDropdownItemClick = (e) => {
-    console.log(e);
     if (e.key === '4') {
       localStorage.removeItem('token-info');
       navigate('/login');
+    } else if (e.key === '1') {
+      navigate('/user-detail');
     }
   };
   return (
-    <Header
-      style={{
-        backdropFilter: 'blur(8px)',
-        boxShadow: '0 0 8px 2px rgba(0, 0, 0, 0.05)',
-        padding: 0,
-      }}
-    >
+    <Header>
       <Row>
         <Col span={12}>
-          <Col style={{ width: 350, marginLeft: 40 }}>
+          <Col style={{ width: 350 }}>
             <Search placeholder="input search text" allowClear onSearch={onSearch} />
           </Col>
         </Col>
@@ -82,7 +75,7 @@ const HeaderNav = () => {
                 unCheckedChildren={<SunOutlined />}
               />
             </Col>
-            <Col span={7}>
+            <Col span={5}>
               <Dropdown
                 menu={{
                   onClick: handleDropdownItemClick,
@@ -92,7 +85,7 @@ const HeaderNav = () => {
               >
                 <Button color="default" variant="outlined" style={{ marginTop: 15 }} ghost>
                   <img src={userImg} style={{ width: 22, height: 22 }} />
-                  <Typography.Text style={{ color: 'white' }}>{displayName}</Typography.Text>
+                  {displayName}
                 </Button>
               </Dropdown>
             </Col>
