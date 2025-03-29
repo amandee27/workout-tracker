@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import SideNavBar from './SideNavBar';
 import HeaderNav from './HeaderNav';
@@ -9,13 +9,14 @@ const Home = () => {
   return (
     <Layout
       style={{
-        minHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
       }}
     >
-      <SideNavBar></SideNavBar>
+      <SideNavBar style={{ height: '100%' }}></SideNavBar>
       <Layout>
         <HeaderNav></HeaderNav>
-        <Content style={{ backgroundColor: 'white', height: '100vh - 30px' }}>
+        <Content style={{ backgroundColor: 'white', height: '100%', overflowY: 'scroll' }}>
           <Outlet></Outlet>
         </Content>
       </Layout>
