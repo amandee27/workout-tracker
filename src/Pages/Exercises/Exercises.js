@@ -1,4 +1,4 @@
-import { Layout } from 'antd';
+import { Card, Layout, List, Pagination } from 'antd';
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -23,19 +23,28 @@ const Exercises = () => {
   }, []);
   return (
     <Layout style={{ minHeightt: '100vh' }} align="center">
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto auto auto ',
-          gridGap: 10,
-          padding: 10,
-        }}
-      >
-        {exercises.map((exerc) => (
-          <div style={{ padding: 10 }}>
-            <CardLayout exercise={exerc}></CardLayout>
-          </div>
-        ))}
+      <div style={{ padding: 10 }}>
+        <List
+          grid={{
+            gutter: 16,
+            xs: 1,
+            sm: 2,
+            md: 2,
+            lg: 3,
+            xl: 4,
+            xxl: 3,
+          }}
+          dataSource={exercises}
+          pagination={{
+            showSizeChanger: false,
+            pageSize: 12,
+          }}
+          renderItem={(item) => (
+            <List.Item>
+              <CardLayout exercise={item}></CardLayout>
+            </List.Item>
+          )}
+        />
       </div>
     </Layout>
   );
