@@ -5,7 +5,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
-import { Flex, Menu, Typography, Button } from 'antd';
+import { Menu, Typography, Button, Row } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logo from '../Logo/heart.png';
@@ -20,9 +20,6 @@ const floatMenuCollapseButton = {
 const SideNavBar = () => {
   const [collapsed, setCollapsed] = useState(true);
   const navigate = useNavigate();
-  const navigateHome = () => {
-    navigate('/');
-  };
 
   return (
     <Sider
@@ -33,14 +30,16 @@ const SideNavBar = () => {
       collapsed={!collapsed}
       style={{ boxShadow: '0 0 8px 2px rgba(0, 0, 0, 0.05)' }}
     >
-      <Flex justify="center" align="center" onClick={navigateHome}>
-        <img src={logo} style={{ width: 25, height: 25 }}></img>
+      <Row align="center" justify="center">
+        <img src={logo} style={{ width: 25, height: 25, marginTop: 15, marginRight: 5 }} />
         {collapsed && (
-          <Typography.Title level={4} style={{ color: 'black', paddingLeft: 10, marginTop: 15, marginBottom: 15 }}>
-            Fitness Logger
-          </Typography.Title>
+          <div style={{ whiteSpace: 'nowrap', marginTop: -10 }}>
+            <Typography.Title level={4} style={{ color: 'black' }}>
+              Fitness Logger
+            </Typography.Title>
+          </div>
         )}
-      </Flex>
+      </Row>
       <Menu
         theme="light"
         mode="inline"
