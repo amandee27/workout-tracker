@@ -9,9 +9,9 @@ import PublicRoutes from './Shared/PublicRoutes';
 import Calendar from './Pages/Calendar/Calendar';
 import UserDetails from './Pages/UserDetails/UserDetails';
 import Logs from './Pages/Logs/Logs';
-import Exercises from './Pages/Exercises/Exercises';
 import LogExercise from './Pages/Exercises/LogExercise/LogExercise';
 import ExerciseDetails from './Pages/Exercises/ExerciseDetails/ExerciseDetails';
+import Exercises from './Pages/Exercises/Exercises';
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
             <Route path="logs" element={<Logs />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="log-exercise" element={<LogExercise />} />
-            <Route path="exercise-details" element={<ExerciseDetails />} />
+            <Route path="exercise-details/:id" element={<ExerciseDetails />} />
             <Route path="" element={<Navigate to={'exercises'} />} />
           </Route>
         </Route>
