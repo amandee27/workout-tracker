@@ -42,14 +42,6 @@ const HeaderNav = () => {
         </Col>
         <Col span={12}>
           <Row align="center" justify="end">
-            <Col span={3}>
-              <Switch
-                size="small"
-                defaultChecked
-                checkedChildren={<MoonOutlined />}
-                unCheckedChildren={<SunOutlined />}
-              />
-            </Col>
             <Col span={5}>
               <Dropdown
                 menu={{
