@@ -16,29 +16,6 @@ const { Header } = Layout;
 const items = [
   {
     key: '1',
-    label: 'Profile',
-    icon: <UserOutlined />,
-  },
-  {
-    key: '2',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-        Settings
-      </a>
-    ),
-    icon: <SettingOutlined />,
-  },
-  {
-    key: '3',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-        Help Center
-      </a>
-    ),
-    icon: <QuestionOutlined />,
-  },
-  {
-    key: '4',
     label: 'Logout',
     icon: <LogoutOutlined />,
   },
@@ -50,11 +27,9 @@ const HeaderNav = () => {
   let displayName = tokenInfo.displayName;
   const navigate = useNavigate();
   const handleDropdownItemClick = (e) => {
-    if (e.key === '4') {
+    if (e.key === '1') {
       localStorage.removeItem('token-info');
       navigate('/login');
-    } else if (e.key === '1') {
-      navigate('/user-detail');
     }
   };
   return (
