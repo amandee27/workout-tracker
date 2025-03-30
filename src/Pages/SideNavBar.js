@@ -52,14 +52,14 @@ const SideNavBar = () => {
         selectedKeys={pathPrefix}
         items={[
           {
+            key: 'myWorkouts',
+            icon: <ScheduleOutlined />,
+            label: <NavLink to="/myWorkouts">My Workouts</NavLink>,
+          },
+          {
             key: 'exercises',
             icon: <MenuOutlined />,
             label: <NavLink to="/exercises">Exercises</NavLink>,
-          },
-          {
-            key: 'logs',
-            icon: <ScheduleOutlined />,
-            label: <NavLink to="/logs">Logs</NavLink>,
           },
           {
             key: 'calendar',

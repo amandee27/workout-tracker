@@ -21,7 +21,7 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="calendar" element={<Calendar />} />
             <Route path="user-detail" element={<UserDetails />} />
-            <Route path="logs" element={<Logs />} />
+            <Route path="myWorkouts" element={<Logs />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="log-exercise" element={<LogExercise />} />
             <Route path="exercises/exercise-details/:id" element={<ExerciseDetails />} />
