@@ -22,7 +22,6 @@ const items = [
 ];
 
 const HeaderNav = () => {
-  const onSearch = () => {};
   let tokenInfo = JSON.parse(localStorage.getItem('token-info'));
   let displayName = tokenInfo.displayName;
   const navigate = useNavigate();
@@ -35,14 +34,9 @@ const HeaderNav = () => {
   return (
     <Header>
       <Row>
-        <Col span={12}>
-          <Col style={{ width: 350 }}>
-            <Search placeholder="input search text" allowClear onSearch={onSearch} />
-          </Col>
-        </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Row align="center" justify="end">
-            <Col span={5}>
+            <Col span={3}>
               <Dropdown
                 menu={{
                   onClick: handleDropdownItemClick,
