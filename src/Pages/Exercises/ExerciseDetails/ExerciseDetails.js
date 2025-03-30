@@ -14,7 +14,6 @@ const ExerciseDetails = () => {
   useEffect(() => {
     getDoc(docRef)
       .then((doc) => {
-        console.log(doc.data());
         setExercise(doc.data());
         setLoading(false);
       })
