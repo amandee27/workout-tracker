@@ -104,15 +104,8 @@ const CardLayout = ({ exercise }) => {
       key={exercise.id}
       style={{ height: 500 }}
       type="inner"
+      onClick={() => exerciseDetails(exercise.id)}
       cover={<img alt="Card image" src={exercise.image} style={{ padding: 10 }} />}
-      actions={[
-        <Tooltip placement="bottom" title="Log Exercise">
-          <EditOutlined key="edit" onClick={showModal} />
-        </Tooltip>,
-        <Tooltip placement="bottom" title="Exercise details">
-          <EllipsisOutlined key="ellipsis" onClick={() => exerciseDetails(exercise.id)} />
-        </Tooltip>,
-      ]}
     >
       <div style={{ height: '100%', width: '100%' }}>
         <Meta
@@ -128,86 +121,6 @@ const CardLayout = ({ exercise }) => {
           }
         />
       </div>
-
-      <Modal
-        open={open}
-        okText="Submit"
-        okButtonProps={{ autoFocus: true, htmlType: 'submit', disabled: buttonDisabled }}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        destroyOnClose
-        title="Log Workout"
-        modalRender={(dom) => (
-          <Form
-            {...formItemLayout}
-            form={form}
-            variant="outlined"
-            className="add"
-            style={{ maxWidth: 600 }}
-            onFinish={(values) => onCreate(values)}
-            clearOnDestroy
-            initialValues={{ weight: 0 }}
-            onFieldsChange={(chagedFeilds, allFeilds) => {
-              let allValidated =
-                allFeilds.find((item) => item.name[0] === 'sets').validated &&
-                allFeilds.find((item) => item.name[0] === 'reps').validated &&
-                allFeilds.find((item) => item.name[0] === 'date').validated;
-              let setsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'sets').errors.length);
-              let repsValidation = Boolean(allFeilds.find((item) => item.name[0] === 'reps').errors.length);
-              let dateValidation = Boolean(allFeilds.find((item) => item.name[0] === 'date').errors.length);
-              let hasFeildError = setsValidation || repsValidation || dateValidation;
-              let formDisabled = !(allValidated && !hasFeildError);
-              setButtonDisabled(formDisabled);
-            }}
-          >
-            {dom}
-          </Form>
-        )}
-      >
-        <Form.Item
-          label="Workout"
-          name="selectWorkout"
-          validateTrigger={['onBlur']}
-          rules={[{ message: 'Please input!' }]}
-        >
-          <Input defaultValue={exercise.name} readOnly />
-        </Form.Item>
-
-        <Form.Item
-          label="Sets"
-          name="sets"
-          validateTrigger={['onBlur']}
-          rules={[{ required: true, message: 'Please input no. of sets!' }]}
-        >
-          <InputNumber style={{ width: '100%' }} min="0" />
-        </Form.Item>
-
-        <Form.Item
-          label="Reps"
-          name="reps"
-          validateTrigger={['onBlur']}
-          rules={[{ required: true, message: 'Please input reps!' }]}
-        >
-          <InputNumber style={{ width: '100%' }} min="0" />
-        </Form.Item>
-
-        <Form.Item label="Weight" name="weight">
-          <InputNumber style={{ width: '100%' }} min="0" />
-        </Form.Item>
-
-        <Form.Item label="Notes" name="notes">
-          <Input.TextArea />
-        </Form.Item>
-
-        <Form.Item
-          label="Date"
-          name="date"
-          validateTrigger={['onBlur']}
-          rules={[{ required: true, message: 'Please input date!' }]}
-        >
-          <DatePicker style={{ width: '100%' }} />
-        </Form.Item>
-      </Modal>
     </Card>
   );
 };

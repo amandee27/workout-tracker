@@ -9,7 +9,6 @@ import PublicRoutes from './Shared/PublicRoutes';
 import Calendar from './Pages/Calendar/Calendar';
 import UserDetails from './Pages/UserDetails/UserDetails';
 import Logs from './Pages/Logs/Logs';
-import LogExercise from './Pages/Exercises/LogExercise/LogExercise';
 import ExerciseDetails from './Pages/Exercises/ExerciseDetails/ExerciseDetails';
 import Exercises from './Pages/Exercises/Exercises';
 
@@ -23,7 +22,6 @@ function App() {
             <Route path="user-detail" element={<UserDetails />} />
             <Route path="myWorkouts" element={<Logs />} />
             <Route path="exercises" element={<Exercises />} />
-            <Route path="log-exercise" element={<LogExercise />} />
             <Route path="exercises/exercise-details/:id" element={<ExerciseDetails />} />
             <Route path="" element={<Navigate to={'exercises'} />} />
           </Route>
