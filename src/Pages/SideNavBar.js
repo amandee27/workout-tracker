@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Menu, Typography, Button, Row } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../Logo/heart.png';
 import { useState } from 'react';
 
@@ -19,7 +19,13 @@ const floatMenuCollapseButton = {
 
 const SideNavBar = () => {
   const [collapsed, setCollapsed] = useState(true);
-  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const pathMatchRegex = /^\/([a-z\-]+)/;
+
+  const pathMatch = location.pathname.match(pathMatchRegex);
+  const pathPrefix = pathMatch[1];
 
   return (
     <Sider
@@ -43,20 +49,20 @@ const SideNavBar = () => {
       <Menu
         theme="light"
         mode="inline"
-        defaultSelectedKeys={['1']}
+        selectedKeys={pathPrefix}
         items={[
           {
-            key: '1',
+            key: 'exercises',
             icon: <MenuOutlined />,
             label: <NavLink to="/exercises">Exercises</NavLink>,
           },
           {
-            key: '2',
+            key: 'logs',
             icon: <ScheduleOutlined />,
             label: <NavLink to="/logs">Logs</NavLink>,
           },
           {
-            key: '3',
+            key: 'calendar',
             icon: <CalendarOutlined />,
             label: <NavLink to="/calendar">Calendar</NavLink>,
           },

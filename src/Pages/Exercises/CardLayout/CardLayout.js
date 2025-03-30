@@ -47,7 +47,7 @@ const CardLayout = ({ exercise }) => {
   };
 
   const exerciseDetails = (id) => {
-    navigate(`/exercise-details/${id}`);
+    navigate(`/exercises/exercise-details/${id}`);
   };
 
   const onCreate = (values) => {

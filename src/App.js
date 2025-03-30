@@ -24,7 +24,7 @@ function App() {
             <Route path="logs" element={<Logs />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="log-exercise" element={<LogExercise />} />
-            <Route path="exercise-details/:id" element={<ExerciseDetails />} />
+            <Route path="exercises/exercise-details/:id" element={<ExerciseDetails />} />
             <Route path="" element={<Navigate to={'exercises'} />} />
           </Route>
         </Route>
