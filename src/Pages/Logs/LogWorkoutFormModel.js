@@ -3,6 +3,8 @@ import WorkoutFormModal from './WorkoutFormModal';
 import { db } from '../../firebase';
 import { useState } from 'react';
 import { Form } from 'antd';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 
 const LogWorkoutFormModel = ({ exerciseList, openCreate, setOpenCreate }) => {
   const uid = JSON.parse(localStorage.getItem('token-info')).uid;
@@ -10,6 +12,7 @@ const LogWorkoutFormModel = ({ exerciseList, openCreate, setOpenCreate }) => {
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const workout = { date: dayjs() };
 
   const onFinish = (values, e) => {
     values.date = values.date.format('YYYY-MM-DD HH:mm:ss');
@@ -39,6 +42,7 @@ const LogWorkoutFormModel = ({ exerciseList, openCreate, setOpenCreate }) => {
         handleCancel={handleCancel}
         buttonDisabled={buttonDisabled}
         setButtonDisabled={setButtonDisabled}
+        workout={workout}
       ></WorkoutFormModal>
     </>
   );
