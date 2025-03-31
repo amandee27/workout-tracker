@@ -25,7 +25,7 @@ const SideNavBar = () => {
   const pathMatchRegex = /^\/([a-z\-]+)/;
 
   const pathMatch = location.pathname.match(pathMatchRegex);
-  const pathPrefix = pathMatch[1];
+  const pathPrefix = pathMatch != null ? pathMatch[1] : 'my-workouts';
 
   return (
     <Sider
@@ -52,9 +52,9 @@ const SideNavBar = () => {
         selectedKeys={pathPrefix}
         items={[
           {
-            key: 'myWorkouts',
+            key: 'my-workouts',
             icon: <ScheduleOutlined />,
-            label: <NavLink to="/myWorkouts">My Workouts</NavLink>,
+            label: <NavLink to="/my-workouts">My Workouts</NavLink>,
           },
           {
             key: 'exercises',

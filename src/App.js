@@ -20,10 +20,10 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="calendar" element={<Calendar />} />
             <Route path="user-detail" element={<UserDetails />} />
-            <Route path="myWorkouts" element={<Logs />} />
+            <Route path="my-workouts" element={<Logs />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="exercises/exercise-details/:id" element={<ExerciseDetails />} />
-            <Route path="" element={<Navigate to={'exercises'} />} />
+            <Route path="" element={<Navigate to={'my-workouts'} />} />
           </Route>
         </Route>
         <Route element={<PublicRoutes />}>
