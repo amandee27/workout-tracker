@@ -40,6 +40,7 @@ const EditWorkoutFormModel = ({ exerciseList, openEdit, setOpenEdit, workoutId, 
     if (workoutId && openEdit) {
       const docRef = doc(db, 'Logs', workoutId);
       values.date = values.date.format('YYYY-MM-DD HH:mm:ss');
+      values.notes = values.notes || '';
       values.uid = uid;
 
       updateDoc(docRef, values)

@@ -14,6 +14,7 @@ const LogWorkoutFormModel = ({ exerciseList, openCreate, setOpenCreate }) => {
   const onFinish = (values, e) => {
     values.date = values.date.format('YYYY-MM-DD HH:mm:ss');
     values.uid = uid;
+    values.notes = values.notes || '';
 
     addDoc(colRef2, values).then(() => {
       form.resetFields();
