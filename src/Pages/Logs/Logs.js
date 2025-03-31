@@ -1,4 +1,4 @@
-import { Layout, Button, Row, Col, Table, Space, Popconfirm } from 'antd';
+import { Layout, Button, Row, Col, Table, Space, Popconfirm, Empty } from 'antd';
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../../firebase';
@@ -83,13 +83,25 @@ const Logs = () => {
       });
   };
 
+  const toggleButton = (
+    <div>
+      <p>
+        Looks like you haven't logged any workouts yet,
+        <br /> Click on button to add first one.
+      </p>
+      <Button type="primary" onClick={LogWorkout}>
+        Log Workout
+      </Button>
+    </div>
+  );
+
   return (
     <Layout style={{ minHeight: '100vh', padding: 10 }} align="center">
       {!loading && (
         <div>
           <Row justify="end">
             <Col span={4}>
-              <Button style={{ margin: 10 }} onClick={LogWorkout}>
+              <Button type="primary" style={{ margin: 10 }} onClick={LogWorkout}>
                 Log Workout
               </Button>
             </Col>
@@ -101,11 +113,13 @@ const Logs = () => {
             setOpenCreate={setOpenCreate}
           ></LogWorkoutFormModel>
 
-          <Table dataSource={loggedWorkoutList}>
-            <ColumnGroup title="Time Stamp">
-              <Column title="Date" dataIndex="workoutDate" key="workoutDate" />
-              <Column title="Time" dataIndex="time" key="time" />
-            </ColumnGroup>
+          <Table
+            dataSource={loggedWorkoutList}
+            locale={{ emptyText: <Empty description="No Logged Workouts">{toggleButton}</Empty> }}
+          >
+            <Column title="Date" dataIndex="workoutDate" key="workoutDate" />
+            <Column title="Time" dataIndex="time" key="time" />
+
             <Column title="Notes" dataIndex="notes" key="notes" />
             <Column
               title="Action"
