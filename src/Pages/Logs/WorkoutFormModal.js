@@ -21,7 +21,7 @@ const WorkoutFormModal = ({
       // confirmLoading={loading}
       onCancel={handleCancel}
       destroyOnClose
-      title="Log Workout"
+      title={openEdit ? 'Edit Workout' : 'Log Workout'}
       modalRender={(dom) => (
         <Form
           form={form}
